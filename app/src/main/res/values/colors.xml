@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0277BD</color>
+    <color name="colorPrimaryDark">#01579B</color>
+    <color name="colorAccent">#ff1a8c</color>
+    <color name="cafe1">#ffe6cc</color>
+    <color name="pink">#ffcce6</color>
+    <color name="blue">#cce6ff</color>
+
+    <color name="fab1_color">#4CAF50</color>
+    <color name="fab2_color">#2196F3</color>
+
+
+    <color name="green1">#009688</color>
+    <color name="green2">#7CB342</color>
+    <color name="green3">#1DE9B6</color>
+    <color name="green4">#B9F6CA</color>
+    <color name="green5">#00796B</color>
+
+
+    <color name="gray">#E0E0E0 </color>
+    <color name="graydark">#757575</color>
+    <color name="graydarkdark">#212121</color>
+    <color name="red1">#B71C1C</color>
+    <color name="red2">#E53935</color>
+    <color name="lightred">#FFAB91</color>
+
+
+    <color name="blue1">#BBDEFB</color>
+    <color name="blue3">#01579B</color>
+    <color name="purble">#5C6BC0</color>
+    <color name="tool">#00838F</color>
+    <color name="darkpurble">#7E57C2</color>
+    <color name="lightpurble">#D1C4E9</color>
+    <color name="purble1">#E040FB</color>
+
+    <color name="gold">#FFB300</color>
+    <color name="blue2">#03A9F4</color>
+    <color name="cafe2">#FFE0B2</color>
+    <color name="yellow1">#F9A825</color>
+    <color name="orangedark">#E65100</color>
+    <color name="orangelight">#FFCC80</color>
+    <color name="white">#FFF</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+</resources>

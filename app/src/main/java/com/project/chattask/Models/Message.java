@@ -1,0 +1,65 @@
+package com.project.chattask.Models;
+
+/**
+ * Created by mah_y on 8/13/2017.
+ */
+
+public class Message {
+    private String messageid;
+    private String senderid;
+    private String text;
+    private String name;
+    private String imageurl;
+
+    public Message() {
+
+    }
+
+    public Message(String senderid, String text, String name, String imageurl) {
+        this.senderid = senderid;
+        this.text = text;
+        this.name = name;
+        this.imageurl = imageurl;
+    }
+
+    public String getSenderid() {
+        return senderid;
+    }
+
+    public void setSenderid(String senderid) {
+        this.senderid = senderid;
+    }
+    public String getImageurl() {
+        return imageurl;
+    }
+
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
+
+    public String getId() {
+        return messageid;
+    }
+
+    public void setId(String id) {
+        this.messageid = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+}
