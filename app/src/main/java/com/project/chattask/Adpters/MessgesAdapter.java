@@ -57,6 +57,7 @@ public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHo
         }
     }
 
+
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.name.setText(messages.get(position).getName());

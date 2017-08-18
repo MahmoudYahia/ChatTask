@@ -202,11 +202,12 @@ public class SignIn extends AppCompatActivity implements
     public void AddAuthUserToContacts(FirebaseUser account) {
         //public Contact(String uid, String tokenId, String uname, String uemail, String imgURl)
         String photourl="";
-
+        String email=account.getEmail();
+        String FormattedName= email.substring(0,email.indexOf('@'));
 
         Contact contact = new Contact(
                 account.getUid()
-                , account.getDisplayName()
+                , FormattedName
                 , account.getEmail()
                 , " empty ");
 
@@ -214,7 +215,6 @@ public class SignIn extends AppCompatActivity implements
         mDatabaseRef.child("Contacts")
                 .child(account.getUid())
                 .setValue(contact);
-
 
         Toast.makeText(SignIn.this, "Added To Contacts",
                 Toast.LENGTH_SHORT).show();
