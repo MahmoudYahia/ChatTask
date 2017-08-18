@@ -1,6 +1,5 @@
 package com.project.chattask.Fragments;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,10 +9,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -21,15 +18,12 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.project.chattask.Activities.ContactsList;
 import com.project.chattask.Activities.MainActivity;
-import com.project.chattask.Activities.SignIn;
 import com.project.chattask.Adpters.MessgesAdapter;
 import com.project.chattask.Models.Contact;
 import com.project.chattask.Models.Message;
@@ -54,11 +48,11 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private FirebaseUser mFirebaseUser;
     private Contact SelectedConttact;
 
-    List <Message>messages;
+    List<Message> Messages;
+    List<String> MessagesIds;
     private FirebaseRecyclerAdapter<Message, MainActivity.MessageViewHolder> mFirebaseAdapter;
     // user Fields
-    private String mUserName;
-    private String Img_URl;
+
     private Message message;
     DatabaseReference databaseRef;
 
@@ -90,20 +84,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
-        if (mFirebaseUser != null) {
-            // authenticated
-            // fetching profile data
-            mUserName = mFirebaseUser.getDisplayName();
-            String id = mFirebaseUser.getUid();
-            Log.i("UserId", id);
-
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                Img_URl = mFirebaseUser.getPhotoUrl().toString();
-            }
-
-        }
         ReadMessages();
-
 
         return view;
     }
@@ -123,43 +104,55 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
         // public Message(String senderid, String text, String name, String imageurl) {
         String photo_url;
-        if (mFirebaseUser.getPhotoUrl()==null){
-            photo_url =" def";
-        }
-        else{
-            photo_url=mFirebaseUser.getPhotoUrl().toString();
+        if (mFirebaseUser.getPhotoUrl() == null) {
+            photo_url = " def";
+        } else {
+            photo_url = mFirebaseUser.getPhotoUrl().toString();
         }
 
+        String typeedMessage= inputMessage.getText().toString().trim();
+        //public Message(String messageid, String receiverid, String senderid, String text, String name, String imageurl)
 
-        message = new Message(mFirebaseUser.getUid()
+        message = new Message(SelectedConttact.getUid()
+                , mFirebaseUser.getUid()
+                , typeedMessage
+                , mFirebaseUser.getDisplayName()
+                , photo_url);
+/*
+        message = new Message(mFirebaseUser.getUid(),
                 , inputMessage.getText().toString()
                 , mFirebaseUser.getDisplayName()
                 , photo_url);
-
+*/
         mDatabaseRef.child("messeges")
                 .child(mFirebaseUser.getUid())
-                .child(mFirebaseUser.getUid() + SelectedConttact.getUid())
-                .push()
-                .setValue(message);
-        inputMessage.setText("");
-
-        mDatabaseRef.child("messeges")
                 .child(SelectedConttact.getUid())
-                .child(SelectedConttact.getUid() + mFirebaseUser.getUid())
                 .push()
                 .setValue(message);
+
+        // back up messages at
+        if (!SelectedConttact.getUid().equals(mFirebaseUser.getUid())){
+
+            mDatabaseRef.child("messeges")
+                    .child(SelectedConttact.getUid())
+                    .child(mFirebaseUser.getUid())
+                    .push()
+                    .setValue(message);
+        }
+
         inputMessage.setText("");
     }
 
 
     public void ReadMessages() {
+
         DatabaseReference mDatabaseRef;
         mDatabaseRef = FirebaseDatabase.getInstance().getReference()
                 .child("messeges")
                 .child(mFirebaseUser.getUid())
-                .child(mFirebaseUser.getUid()+SelectedConttact.getUid());
+                .child(SelectedConttact.getUid());
 
-        Log.i("wwwww",mFirebaseUser.getUid()+SelectedConttact.getUid());
+        Log.i("wwwww", mFirebaseUser.getUid() + SelectedConttact.getUid());
 
         mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -167,17 +160,22 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
                 Map<String, Message> td = new HashMap<>();
 
-                messages = new ArrayList<>(td.values());
+                Messages = new ArrayList<>(td.values());
+                MessagesIds= new ArrayList<>(td.keySet());
 
-                for (DataSnapshot Messages: dataSnapshot.getChildren()) {
+
+                for (DataSnapshot Messages : dataSnapshot.getChildren()) {
                     Message message = Messages.getValue(Message.class);
-                    messages.add(message);
+                    MainActivityFragment.this.Messages.add(message);
+//
+                    String string = Messages.getKey();
+                    MessagesIds.add(string);
                 }
 
-                MessgesAdapter messgesAdapter= new MessgesAdapter(getActivity(),messages);
+                MessgesAdapter messgesAdapter = new MessgesAdapter(getActivity(), Messages);
                 messageRecyclerView.setAdapter(messgesAdapter);
                 messgesAdapter.notifyDataSetChanged();
-                layoutManager.scrollToPosition(messages.size()-1);
+                layoutManager.scrollToPosition(Messages.size() - 1);
             }
 
             @Override
@@ -187,8 +185,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         });
 
     }
-
-
 
 
     @Override

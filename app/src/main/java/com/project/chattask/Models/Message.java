@@ -6,6 +6,7 @@ package com.project.chattask.Models;
 
 public class Message {
     private String messageid;
+    private String receiverid;
     private String senderid;
     private String text;
     private String name;
@@ -15,27 +16,32 @@ public class Message {
 
     }
 
-    public Message(String senderid, String text, String name, String imageurl) {
+    public Message(String receiverid, String senderid, String text, String name, String imageurl) {
+        this.receiverid = receiverid;
         this.senderid = senderid;
         this.text = text;
         this.name = name;
         this.imageurl = imageurl;
     }
 
+    public String getReceiverid() {
+        return receiverid;
+    }
+
+    public void setReceiverid(String receiverid) {
+        this.receiverid = receiverid;
+    }
+
     public String getSenderid() {
         return senderid;
     }
 
-    public void setSenderid(String senderid) {
-        this.senderid = senderid;
-    }
+
     public String getImageurl() {
         return imageurl;
     }
 
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
-    }
+
 
     public String getId() {
         return messageid;
