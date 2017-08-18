@@ -7,9 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.project.chattask.Activities.MainActivity;
 import com.project.chattask.Models.Contact;
 import com.project.chattask.R;
@@ -39,9 +43,27 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     }
 
     @Override
-    public void onBindViewHolder(ContactViewHolder holder, final int position) {
+    public void onBindViewHolder(final ContactViewHolder holder, final int position) {
         holder.contactName.setText(ContactsList.get(position).getUname());
-        Glide.with(mContext).load(ContactsList.get(position).getImgurl()).placeholder(R.drawable.person_flat).into(holder.contactImg);
+
+        Glide.with(mContext)
+                .load(ContactsList.get(position).getImgurl())
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .fitCenter()
+                .crossFade()
+                .into(holder.contactImg);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,10 +85,12 @@ class ContactViewHolder extends RecyclerView.ViewHolder{
 
     TextView contactName;
     CircleImageView contactImg;
+    ProgressBar progressBar;
          public ContactViewHolder(View itemView) {
              super(itemView);
              contactImg= (CircleImageView) itemView.findViewById(R.id.contact_item_img);
              contactName= (TextView) itemView.findViewById(R.id.contact_item_name);
+             progressBar= (ProgressBar) itemView.findViewById(R.id.prgrss_bar);
          }
 
      }
