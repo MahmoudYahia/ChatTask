@@ -1,5 +1,11 @@
 package com.project.chattask.Fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,15 +13,19 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,12 +33,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.project.chattask.Activities.MainActivity;
 import com.project.chattask.Adpters.MessgesAdapter;
 import com.project.chattask.Models.Contact;
 import com.project.chattask.Models.Message;
 import com.project.chattask.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,15 +54,20 @@ import java.util.Map;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements View.OnClickListener, TextWatcher {
+    private static final int PICK_IMAGE_REQUEST = 100;
     RecyclerView messageRecyclerView;
     RecyclerView.LayoutManager layoutManager;
     EditText inputMessage;
-    ImageButton sendMessage;
+    ImageButton sendMessage, SelectImgBtn;
+
+    ImageView selected_img_toUpload;
 
     private DatabaseReference mDatabaseRef;
-    private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private Contact SelectedConttact;
+
+    private StorageReference storageRef;
+
 
     List<Message> Messages;
     List<String> MessagesIds;
@@ -54,7 +75,13 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     // user Fields
 
     private Message message;
-    DatabaseReference databaseRef;
+
+    Bitmap selectedBitmapImgToUpload;
+    boolean IfimgSelected = false;
+    FirebaseStorage storage;
+
+    String sendedImgName;
+    String uploadedImgUrl;
 
     public MainActivityFragment() {
     }
@@ -65,10 +92,16 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         inputMessage = (EditText) view.findViewById(R.id.messageEditText);
         sendMessage = (ImageButton) view.findViewById(R.id.sendButton);
-        sendMessage.setEnabled(false);
+        selected_img_toUpload = (ImageView) view.findViewById(R.id.selected_img_toUpload);
+        SelectImgBtn = (ImageButton) view.findViewById(R.id.select_img);
+        SelectImgBtn.setOnClickListener(this);
+        sendMessage.setVisibility(View.INVISIBLE);
         inputMessage.addTextChangedListener(this);
         sendMessage.setOnClickListener(this);
 
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
         if (getActivity().getIntent().getExtras() != null) {
             SelectedConttact = (Contact) getActivity().getIntent().getExtras().getSerializable("contact_id");
@@ -94,55 +127,81 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         int id = v.getId();
         switch (id) {
             case R.id.sendButton:
-                SendMessage();
+                // SendMessage();
+                checkToUpload();
                 break;
 
+            case R.id.select_img:
+                showFileChooser();
+                break;
         }
     }
 
-    public void SendMessage() {
+    public void SendMessage(Message UploadMSg) {
 
-        // public Message(String senderid, String text, String name, String imageurl) {
-        String photo_url;
-        if (mFirebaseUser.getPhotoUrl() == null) {
-            photo_url = " def";
-        } else {
-            photo_url = mFirebaseUser.getPhotoUrl().toString();
-        }
 
-        String typeedMessage= inputMessage.getText().toString().trim();
-        //public Message(String messageid, String receiverid, String senderid, String text, String name, String imageurl)
+        //message=CreateMessageInstance();
 
-        message = new Message(SelectedConttact.getUid()
-                , mFirebaseUser.getUid()
-                , typeedMessage
-                , mFirebaseUser.getDisplayName()
-                , photo_url);
-/*
-        message = new Message(mFirebaseUser.getUid(),
-                , inputMessage.getText().toString()
-                , mFirebaseUser.getDisplayName()
-                , photo_url);
-*/
         mDatabaseRef.child("messeges")
                 .child(mFirebaseUser.getUid())
                 .child(SelectedConttact.getUid())
                 .push()
-                .setValue(message);
+                .setValue(UploadMSg);
 
         // back up messages at
-        if (!SelectedConttact.getUid().equals(mFirebaseUser.getUid())){
+        if (!SelectedConttact.getUid().equals(mFirebaseUser.getUid())) {
 
             mDatabaseRef.child("messeges")
                     .child(SelectedConttact.getUid())
                     .child(mFirebaseUser.getUid())
                     .push()
-                    .setValue(message);
+                    .setValue(UploadMSg);
         }
 
         inputMessage.setText("");
     }
 
+    public void checkToUpload() {
+        if (IfimgSelected) {
+            UploadPhotoToStorage();
+        } else {
+            SendMessage(CreateMessageInstance());
+        }
+    }
+
+    private Message CreateMessageInstance() {
+
+
+        String typedMessage = inputMessage.getText().toString().trim();
+
+        String photo_url;
+
+        String uploadedMsgImg;
+
+        if (mFirebaseUser.getPhotoUrl() == null) {
+            photo_url = "def";
+        } else {
+            photo_url = mFirebaseUser.getPhotoUrl().toString();
+        }
+
+        if (IfimgSelected) {
+            uploadedMsgImg = uploadedImgUrl;
+        } else {
+            uploadedMsgImg = "null";
+        }
+        //Message(String receiverid, String senderid, String text, String name, String imageurl, String uploadedimg)
+
+        message = new Message(
+                SelectedConttact.getUid()
+                , mFirebaseUser.getUid()
+                , typedMessage
+                , mFirebaseUser.getDisplayName()
+                , photo_url
+                , uploadedMsgImg);
+
+
+        return message;
+    }
 
     public void ReadMessages() {
 
@@ -161,7 +220,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 Map<String, Message> td = new HashMap<>();
 
                 Messages = new ArrayList<>(td.values());
-                MessagesIds= new ArrayList<>(td.keySet());
+                MessagesIds = new ArrayList<>(td.keySet());
 
 
                 for (DataSnapshot Messages : dataSnapshot.getChildren()) {
@@ -186,6 +245,87 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
     }
 
+    public void UploadPhotoToStorage() {
+        //  storageRef.child("MessagesPhotos");
+
+        selected_img_toUpload.setImageBitmap(null); // remove img
+        sendMessage.setVisibility(View.INVISIBLE);  // deactivate send btn
+
+        UploadTask uploadTask = storageRef.child("messagesPhotos")
+                .child(sendedImgName)
+                .putBytes(getImageBytes(selectedBitmapImgToUpload));
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i("errrr", exception.toString());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Toast.makeText(getActivity(), "Added", Toast.LENGTH_LONG).show();
+
+                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    uploadedImgUrl = downloadUrl.toString();
+                } else {
+                    uploadedImgUrl = "null";
+                }
+
+
+
+                SendMessage(CreateMessageInstance());
+                IfimgSelected = false; // change flag after sending
+
+            }
+        });
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+
+            try {
+                //Getting the Bitmap from Gallery
+                selectedBitmapImgToUpload = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
+                Uri uri = data.getData();
+                File file = new File(uri.getPath());
+                if (file.getName() != null) {
+                    sendedImgName = file.getName();
+                } else {
+                    sendedImgName = "null";
+                }
+
+                selected_img_toUpload.setImageBitmap(selectedBitmapImgToUpload);
+                sendMessage.setVisibility(View.VISIBLE);
+                IfimgSelected = true;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    public byte[] getImageBytes(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return imageBytes;
+    }
+
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -202,13 +342,15 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         checkText();
     }
 
+
     public void checkText() {
-        if (TextUtils.isEmpty(inputMessage.getText().toString())) {
-            sendMessage.setEnabled(false);
+        if (!TextUtils.isEmpty(inputMessage.getText().toString())) {
+            sendMessage.setVisibility(View.VISIBLE);
         } else {
-            sendMessage.setEnabled(true);
+            sendMessage.setVisibility(View.INVISIBLE);
 
         }
     }
+
 }
 

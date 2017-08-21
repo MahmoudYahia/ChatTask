@@ -11,17 +11,19 @@ public class Message {
     private String text;
     private String name;
     private String imageurl;
+    private String uploadedimg;
 
     public Message() {
 
     }
 
-    public Message(String receiverid, String senderid, String text, String name, String imageurl) {
+    public Message(String receiverid, String senderid, String text, String name, String imageurl, String uploadedimg) {
         this.receiverid = receiverid;
         this.senderid = senderid;
         this.text = text;
         this.name = name;
         this.imageurl = imageurl;
+        this.uploadedimg = uploadedimg;
     }
 
     public String getReceiverid() {
@@ -42,6 +44,13 @@ public class Message {
     }
 
 
+    public String getUploadedimg() {
+        return uploadedimg;
+    }
+
+    public void setUploadedimg(String uploadedimg) {
+        this.uploadedimg = uploadedimg;
+    }
 
     public String getId() {
         return messageid;

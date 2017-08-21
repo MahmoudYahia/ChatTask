@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -46,14 +48,16 @@ public class SignIn extends AppCompatActivity implements
 
     Button loginBtn, RegisterBtn;
     public static EditText InputEmial, InputPass;
-
-
+    ImageView logoImg;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        logoImg= (ImageView) findViewById(R.id.signin_logo_img);
+        Glide.with(this).load(R.drawable.typingicon).asGif().into(logoImg);
 
         InputEmial = (EditText) findViewById(R.id.txt_email);
         InputPass = (EditText) findViewById(R.id.txt_pass);

@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0277BD</color>
-    <color name="colorPrimaryDark">#01579B</color>
-    <color name="colorAccent">#ff1a8c</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorPrimary">#00838F</color>
+    <color name="colorAccent">#80CBC4</color>
+
+
+
+
+    <color name="black">#000</color>
+
+    <color name="blue1">#BBDEFB</color>
+    <color name="blue3">#01579B</color>
+    <color name="purble">#5C6BC0</color>
+    <color name="tool">#00838F</color>
+    <color name="darkpurble">#7E57C2</color>
+    <color name="lightpurble">#D1C4E9</color>
+    <color name="purble1">#E040FB</color>
+
+
     <color name="cafe1">#ffe6cc</color>
     <color name="pink">#ffcce6</color>
     <color name="blue">#cce6ff</color>
@@ -26,13 +41,7 @@
     <color name="lightred">#FFAB91</color>
 
 
-    <color name="blue1">#BBDEFB</color>
-    <color name="blue3">#01579B</color>
-    <color name="purble">#5C6BC0</color>
-    <color name="tool">#00838F</color>
-    <color name="darkpurble">#7E57C2</color>
-    <color name="lightpurble">#D1C4E9</color>
-    <color name="purble1">#E040FB</color>
+
 
     <color name="gold">#FFB300</color>
     <color name="blue2">#03A9F4</color>

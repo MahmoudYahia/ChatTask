@@ -39,7 +39,7 @@ public class ContactsList extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     ContactsAdapter ContactsAdapter;
     List<Contact> ContactsList;
-    private FirebaseUser mFirebaseUser;
+    public static FirebaseUser mFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

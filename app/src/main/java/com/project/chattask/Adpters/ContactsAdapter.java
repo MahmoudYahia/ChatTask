@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseUser;
+import com.project.chattask.Activities.ContactsList;
 import com.project.chattask.Activities.MainActivity;
 import com.project.chattask.Models.Contact;
 import com.project.chattask.R;
@@ -29,7 +31,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactViewHolder> {
     private Context mContext;
     private List<Contact> ContactsList;
-
     public ContactsAdapter(Context context, List<Contact> contacts) {
         this.ContactsList =contacts;
         this.mContext=context;
@@ -44,7 +45,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     @Override
     public void onBindViewHolder(final ContactViewHolder holder, final int position) {
-        holder.contactName.setText(ContactsList.get(position).getUname());
+        if (com.project.chattask.Activities.ContactsList.mFirebaseUser.getUid().equals(ContactsList.get(position).getUid())){
+            holder.contactName.setText(" Just  Me ");
+
+        }
+        else {
+            holder.contactName.setText(ContactsList.get(position).getUname());
+        }
 
         Glide.with(mContext)
                 .load(ContactsList.get(position).getImgurl())
@@ -52,13 +59,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                       //  holder.progressBar.setVisibility(View.GONE);
-                        return false;
+                        Glide.with(mContext).load(R.drawable.person_flat).into(holder.contactImg);
+                        return true;
                     }
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        holder.progressBar.setVisibility(View.GONE);
-                        return false;
+                        Glide.with(mContext)
+                                .load(ContactsList.get(position).getImgurl()).into(holder.contactImg);
+                        return true;
                     }
                 })
                 .fitCenter()
@@ -85,12 +94,12 @@ class ContactViewHolder extends RecyclerView.ViewHolder{
 
     TextView contactName;
     CircleImageView contactImg;
-    ProgressBar progressBar;
+    //ProgressBar progressBar;
          public ContactViewHolder(View itemView) {
              super(itemView);
              contactImg= (CircleImageView) itemView.findViewById(R.id.contact_item_img);
              contactName= (TextView) itemView.findViewById(R.id.contact_item_name);
-             progressBar= (ProgressBar) itemView.findViewById(R.id.prgrss_bar);
+          //   progressBar= (ProgressBar) itemView.findViewById(R.id.prgrss_bar);
          }
 
      }
