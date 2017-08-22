@@ -1,4 +1,4 @@
-package com.project.chattask.Fragments;
+package com.project.chattask.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

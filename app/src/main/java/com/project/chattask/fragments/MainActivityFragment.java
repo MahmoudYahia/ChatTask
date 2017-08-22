@@ -1,8 +1,10 @@
-package com.project.chattask.Fragments;
+package com.project.chattask.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -13,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.imagespickmodule.AndroidSingleImagePicker;
+import com.example.imagespickmodule.BaseAndroidImagePicker;
+import com.example.imagespickmodule.IImagePickerHandler;
+import com.example.imagespickmodule.ISingleImagePickerCallback;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,10 +40,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.project.chattask.Activities.MainActivity;
-import com.project.chattask.Adpters.MessgesAdapter;
-import com.project.chattask.Models.Contact;
-import com.project.chattask.Models.Message;
+import com.project.chattask.adapters.MessgesAdapter;
+import com.project.chattask.models.Contact;
+import com.project.chattask.models.Message;
 import com.project.chattask.R;
 
 import java.io.ByteArrayOutputStream;
@@ -53,10 +56,15 @@ import java.util.Map;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements View.OnClickListener, TextWatcher {
-    private static final int PICK_IMAGE_REQUEST = 100;
+public class MainActivityFragment extends Fragment implements View.OnClickListener,
+        TextWatcher,
+        ISingleImagePickerCallback,
+        IImagePickerHandler {
+
     RecyclerView messageRecyclerView;
     RecyclerView.LayoutManager layoutManager;
+    MessgesAdapter messgesAdapter;
+
     EditText inputMessage;
     ImageButton sendMessage, SelectImgBtn;
 
@@ -65,23 +73,24 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private DatabaseReference mDatabaseRef;
     private FirebaseUser mFirebaseUser;
     private Contact SelectedConttact;
-
     private StorageReference storageRef;
 
 
     List<Message> Messages;
     List<String> MessagesIds;
-    private FirebaseRecyclerAdapter<Message, MainActivity.MessageViewHolder> mFirebaseAdapter;
     // user Fields
 
     private Message message;
 
     Bitmap selectedBitmapImgToUpload;
-    boolean IfimgSelected = false;
     FirebaseStorage storage;
+    boolean IfimgSelected = false;
 
     String sendedImgName;
     String uploadedImgUrl;
+
+    BaseAndroidImagePicker imagePicker;
+
 
     public MainActivityFragment() {
     }
@@ -95,9 +104,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         selected_img_toUpload = (ImageView) view.findViewById(R.id.selected_img_toUpload);
         SelectImgBtn = (ImageButton) view.findViewById(R.id.select_img);
         SelectImgBtn.setOnClickListener(this);
-        sendMessage.setVisibility(View.INVISIBLE);
         inputMessage.addTextChangedListener(this);
         sendMessage.setOnClickListener(this);
+        imagePicker = new AndroidSingleImagePicker(this, this);
 
 
         storage = FirebaseStorage.getInstance();
@@ -114,12 +123,28 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         messageRecyclerView.setLayoutManager(layoutManager);
         messageRecyclerView.setHasFixedSize(true);
 
+        Messages = new ArrayList<>();
+        messgesAdapter = new MessgesAdapter(getActivity(), Messages);
+        messageRecyclerView.setAdapter(messgesAdapter);
+
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
-        ReadMessages();
+        if (isOnline(getActivity())) {
+            readMessages();
 
+        } else {
+            Toast.makeText(getActivity(),R.string.noConnection,Toast.LENGTH_LONG).show();
+        }
         return view;
+
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override
@@ -127,49 +152,63 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         int id = v.getId();
         switch (id) {
             case R.id.sendButton:
-                // SendMessage();
+                // sendMessage();
                 checkToUpload();
                 break;
 
             case R.id.select_img:
-                showFileChooser();
+                //  showFileChooser();
+                imagePicker.openPicker();
                 break;
         }
     }
 
-    public void SendMessage(Message UploadMSg) {
+    public void sendMessage(Message UploadMSg) {
 
 
-        //message=CreateMessageInstance();
+        //message=createMessageInstance();
 
-        mDatabaseRef.child("messeges")
-                .child(mFirebaseUser.getUid())
-                .child(SelectedConttact.getUid())
-                .push()
-                .setValue(UploadMSg);
-
-        // back up messages at
-        if (!SelectedConttact.getUid().equals(mFirebaseUser.getUid())) {
-
+        if (isOnline(getActivity())){
             mDatabaseRef.child("messeges")
-                    .child(SelectedConttact.getUid())
                     .child(mFirebaseUser.getUid())
+                    .child(SelectedConttact.getUid())
                     .push()
                     .setValue(UploadMSg);
+
+            // back up messages at
+            if (!SelectedConttact.getUid().equals(mFirebaseUser.getUid())) {
+
+                mDatabaseRef.child("messeges")
+                        .child(SelectedConttact.getUid())
+                        .child(mFirebaseUser.getUid())
+                        .push()
+                        .setValue(UploadMSg);
+            }
+
+            inputMessage.setText("");
+        }
+        else {
+            Toast.makeText(getActivity(),R.string.noConnection,Toast.LENGTH_LONG).show();
         }
 
-        inputMessage.setText("");
     }
 
     public void checkToUpload() {
-        if (IfimgSelected) {
-            UploadPhotoToStorage();
-        } else {
-            SendMessage(CreateMessageInstance());
+        if (isOnline(getActivity())){
+
+            if (IfimgSelected) {
+                uploadPhotoToStorage();
+            } else {
+                sendMessage(createMessageInstance());
+            }
         }
+        else {
+            Toast.makeText(getActivity(),R.string.noConnection,Toast.LENGTH_LONG).show();
+        }
+
     }
 
-    private Message CreateMessageInstance() {
+    private Message createMessageInstance() {
 
 
         String typedMessage = inputMessage.getText().toString().trim();
@@ -203,7 +242,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         return message;
     }
 
-    public void ReadMessages() {
+    public void readMessages() {
+
 
         DatabaseReference mDatabaseRef;
         mDatabaseRef = FirebaseDatabase.getInstance().getReference()
@@ -211,28 +251,24 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 .child(mFirebaseUser.getUid())
                 .child(SelectedConttact.getUid());
 
-        Log.i("wwwww", mFirebaseUser.getUid() + SelectedConttact.getUid());
-
         mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 Map<String, Message> td = new HashMap<>();
 
-                Messages = new ArrayList<>(td.values());
+               // Messages = new ArrayList<>(td.values());
                 MessagesIds = new ArrayList<>(td.keySet());
 
-
                 for (DataSnapshot Messages : dataSnapshot.getChildren()) {
+
                     Message message = Messages.getValue(Message.class);
                     MainActivityFragment.this.Messages.add(message);
-//
                     String string = Messages.getKey();
                     MessagesIds.add(string);
+
                 }
 
-                MessgesAdapter messgesAdapter = new MessgesAdapter(getActivity(), Messages);
-                messageRecyclerView.setAdapter(messgesAdapter);
                 messgesAdapter.notifyDataSetChanged();
                 layoutManager.scrollToPosition(Messages.size() - 1);
             }
@@ -245,7 +281,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
     }
 
-    public void UploadPhotoToStorage() {
+    public void uploadPhotoToStorage() {
         //  storageRef.child("MessagesPhotos");
 
         selected_img_toUpload.setImageBitmap(null); // remove img
@@ -271,54 +307,21 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 if (downloadUrl != null) {
                     uploadedImgUrl = downloadUrl.toString();
                 } else {
-                    uploadedImgUrl = "null";
+                    uploadedImgUrl = null;
                 }
 
-
-
-                SendMessage(CreateMessageInstance());
+                sendMessage(createMessageInstance());
                 IfimgSelected = false; // change flag after sending
 
             }
         });
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            Uri filePath = data.getData();
-
-            try {
-                //Getting the Bitmap from Gallery
-                selectedBitmapImgToUpload = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
-                Uri uri = data.getData();
-                File file = new File(uri.getPath());
-                if (file.getName() != null) {
-                    sendedImgName = file.getName();
-                } else {
-                    sendedImgName = "null";
-                }
-
-                selected_img_toUpload.setImageBitmap(selectedBitmapImgToUpload);
-                sendMessage.setVisibility(View.VISIBLE);
-                IfimgSelected = true;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        imagePicker.onActivityResult(requestCode, resultCode, data);
     }
-
-    private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
     public byte[] getImageBytes(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -352,5 +355,35 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         }
     }
 
+
+    @Override
+    public void onUriReceived(Uri resultUri) {
+        try {
+            selectedBitmapImgToUpload = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), resultUri);
+            File file = new File(resultUri.getPath());
+            if (file.getName() != null) {
+                sendedImgName = file.getName();
+            } else {
+                sendedImgName = "null";
+            }
+
+            selected_img_toUpload.setImageBitmap(selectedBitmapImgToUpload);
+            sendMessage.setVisibility(View.VISIBLE);
+            IfimgSelected = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onNoThingSelected() {
+
+    }
+
+    @Override
+    public void startPickerHandler(Intent data, int requestCode) {
+        startActivityForResult(Intent.createChooser(data,
+                "Select Picture"), requestCode);
+    }
 }
 

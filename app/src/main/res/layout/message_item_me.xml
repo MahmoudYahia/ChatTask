@@ -24,6 +24,7 @@
             android:layout_gravity="center"
             android:background="@drawable/border1"
             android:scaleType="centerCrop"
+            android:visibility="invisible"
             />
 
         <TextView

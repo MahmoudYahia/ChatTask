@@ -1,13 +1,10 @@
-package com.project.chattask.Adpters;
+package com.project.chattask.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,9 +12,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.Activities.ContactsList;
-import com.project.chattask.Activities.MainActivity;
-import com.project.chattask.Models.Contact;
+import com.project.chattask.models.Contact;
+import com.project.chattask.callBackInterfaces.OnContactSelectedListner;
 import com.project.chattask.R;
 
 import java.util.List;
@@ -31,9 +27,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactViewHolder> {
     private Context mContext;
     private List<Contact> ContactsList;
-    public ContactsAdapter(Context context, List<Contact> contacts) {
+    private OnContactSelectedListner contactSelected;
+    FirebaseUser mFirebaseUser;
+    public ContactsAdapter(Context context, List<Contact> contacts, FirebaseUser firebaseUser, OnContactSelectedListner onContactSelectedListner) {
         this.ContactsList =contacts;
         this.mContext=context;
+        this.contactSelected= onContactSelectedListner;
+        this.mFirebaseUser=firebaseUser;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     @Override
     public void onBindViewHolder(final ContactViewHolder holder, final int position) {
-        if (com.project.chattask.Activities.ContactsList.mFirebaseUser.getUid().equals(ContactsList.get(position).getUid())){
+        if (mFirebaseUser.getUid().equals(ContactsList.get(position).getUid())){
             holder.contactName.setText(" Just  Me ");
 
         }
@@ -76,12 +76,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra("contact_id",ContactsList.get(position));
-                mContext.startActivity(intent);
+                contactSelected.contactSelected(position);
             }
         });
-        Log.i("testcount", ContactsList.size()+"");
     }
 
     @Override
@@ -94,12 +91,10 @@ class ContactViewHolder extends RecyclerView.ViewHolder{
 
     TextView contactName;
     CircleImageView contactImg;
-    //ProgressBar progressBar;
          public ContactViewHolder(View itemView) {
              super(itemView);
              contactImg= (CircleImageView) itemView.findViewById(R.id.contact_item_img);
              contactName= (TextView) itemView.findViewById(R.id.contact_item_name);
-          //   progressBar= (ProgressBar) itemView.findViewById(R.id.prgrss_bar);
          }
 
      }

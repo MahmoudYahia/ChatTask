@@ -1,4 +1,4 @@
-package com.project.chattask.Activities;
+package com.project.chattask.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

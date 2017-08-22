@@ -1,4 +1,4 @@
-package com.project.chattask.Models;
+package com.project.chattask.models;
 
 import java.io.Serializable;
 
@@ -49,5 +49,25 @@ public class Contact implements Serializable{
 
     public String getImgurl() {
         return imgurl;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setTokenid(String tokenid) {
+        this.tokenid = tokenid;
+    }
+
+    public void setUname(String uname) {
+        this.uname = uname;
+    }
+
+    public void setUemail(String uemail) {
+        this.uemail = uemail;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
     }
 }

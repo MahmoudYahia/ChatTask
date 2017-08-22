@@ -1,91 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:id="@+id/activity_sign_up"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-    android:gravity="center_vertical"
-tools:context="com.project.chattask.Activities.SignUp"
-    >
-<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_sign_up"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="20dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginBottom="10dp"
-    android:padding="5dp"
-    >
-    <LinearLayout
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    tools:context="com.project.chattask.activities.SignUp">
+
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
-        <!-- User Name-->
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="5dp"
+        app:cardCornerRadius="20dp">
 
-
-        <!--  Email  -->
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText android:id="@+id/reg_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:inputType="textEmailAddress"
-                android:hint="Email"
-                />
-        </android.support.design.widget.TextInputLayout>
-
-        <!-- Phone -->
-
-        <!--Password-->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/reg_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:inputType="textPassword"
-                android:hint="password"
-                />
-        </android.support.design.widget.TextInputLayout>
-        <!-- Confirm Pass-->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/reg_confirm_pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="Confirm Password"
-                android:inputType="textPassword"
-
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/holo_red_light" />
-        </android.support.design.widget.TextInputLayout>
-
-        <!-- Register Button -->
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnRegister"
-            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="Submit"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:background="@drawable/button_style"
-            android:textColor="@color/orangelight"
-            android:textSize="20sp"
-            android:layout_marginBottom="10dp"
-            />
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+            <!-- User Name-->
 
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+
+            <!--  Email  -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/reg_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Phone -->
+
+            <!--Password-->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/reg_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="password"
+                    android:inputType="textPassword" />
+            </android.support.design.widget.TextInputLayout>
+            <!-- Confirm Pass-->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/reg_confirm_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"
+
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/holo_red_light" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Register Button -->
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnRegister"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/button_style"
+                android:text="Submit"
+                android:textColor="@color/orangelight"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>

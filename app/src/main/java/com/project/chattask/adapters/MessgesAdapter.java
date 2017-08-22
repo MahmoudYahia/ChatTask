@@ -1,8 +1,7 @@
-package com.project.chattask.Adpters;
+package com.project.chattask.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
-import com.project.chattask.Models.Message;
+import com.project.chattask.models.Message;
 import com.project.chattask.R;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,6 +28,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHolder> {
     List<Message> messages;
     Context mContext;
+
 
     public MessgesAdapter(Context mContext, List<Message> messages) {
         this.messages = messages;
@@ -65,22 +65,26 @@ public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHo
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 //        holder.name.setText(messages.get(position).getName());
         holder.MessageContent.setText(messages.get(position).getText());
-        int next = position + 1;
 
+        int next = position + 1;
         if (next < messages.size()) {
             if (messages.get(position).getSenderid().equals(messages.get(next).getSenderid())) {
                 holder.imgView.setVisibility(View.INVISIBLE);
             }
         }
+
         Glide.with(mContext).load(messages.get(position).getImageurl()).placeholder(R.drawable.person_flat).into(holder.imgView);
+        Picasso.with(mContext).load(messages.get(position).getUploadedimg()).into(holder.Img_Msg);
 
         if (!messages.get(position).getUploadedimg().equals("null")) {
+
             Glide.with(mContext).load(messages.get(position).getUploadedimg())
                     .placeholder(R.drawable.person_flat)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            return false;
+                            Glide.with(mContext).load(messages.get(position).getUploadedimg()).into(holder.Img_Msg);
+                            return true;
                         }
 
                         @Override
@@ -89,7 +93,8 @@ public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHo
                             return true;
                         }
                     }).centerCrop().into(holder.Img_Msg);
-        } else {
+        }
+        else {
             holder.Img_Msg.setVisibility(View.GONE);
         }
 

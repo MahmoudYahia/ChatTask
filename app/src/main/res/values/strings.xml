@@ -9,5 +9,7 @@
     <string name="signup">Register New Account</string>
     <string name="empty_fields">Empty Field</string>
     <string name="title_activity_contacts">ContactsActivity</string>
+    <string name="noConnection">No Internet Connection</string>
+    <string name="errorFitchingData">Error Fitching Data</string>
 
 </resources>
