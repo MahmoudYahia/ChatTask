@@ -39,6 +39,8 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
     RecyclerView.LayoutManager layoutManager;
     ContactsAdapter ContactsAdapter;
     List<Contact> ContactsList;
+    //    List<Contact> ContactsList;
+
     FirebaseUser mFirebaseUser;
 
     @Override
