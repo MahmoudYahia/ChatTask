@@ -8,13 +8,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
+import com.project.chattask.callBackInterface.OnCheckEmailAndPass;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 
 /**
  * Created by mah_y on 8/22/2017.
  */
 
-public class EmailAndPassSignIn extends SignInAuthorization{
+public class EmailAndPassSignIn extends SignInAuthorization implements OnCheckEmailAndPass {
 
     public EmailAndPassSignIn(Context context, onCheckAuthorizationListener onCheckAuthorizationListener) {
         super(context, onCheckAuthorizationListener);
@@ -32,7 +33,7 @@ public class EmailAndPassSignIn extends SignInAuthorization{
                             // Sign in success, update UI with the signed-in user's information
                             if (user.isEmailVerified()) {
                                 addAuthUserToContacts(user);
-                                mOnCheckAuthorizationListner.autherizationSuccess();
+                                mOnCheckAuthorizationListner.onAutherizationSuccess();
                             } else {
                                 Toast.makeText(mContext, "Not Verified Emial",
                                         Toast.LENGTH_SHORT).show();
@@ -40,9 +41,14 @@ public class EmailAndPassSignIn extends SignInAuthorization{
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            mOnCheckAuthorizationListner.autherizationFailed();
+                            mOnCheckAuthorizationListner.onAutherizationFailed();
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onEmailAndPassEntered(String email, String pass) {
+        checkEmialPassword(email, pass);
     }
 }

@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.project.chattask.callBackInterface.OnCheckEmailAndPass;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 import com.project.chattask.R;
 import com.project.chattask.model.EmailAndPassSignIn;
@@ -29,7 +30,8 @@ import com.project.chattask.model.SignInAuthorization;
 
 public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener,
-        GoogleApiClient.OnConnectionFailedListener, onCheckAuthorizationListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        onCheckAuthorizationListener {
 
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseRef;
@@ -102,11 +104,12 @@ public class SignInActivity extends AppCompatActivity implements
 
         } else {
 
-            EmailAndPassSignIn emailAndPassSignIn= new EmailAndPassSignIn(this,this);
-            emailAndPassSignIn.checkEmialPassword(userMail, userPass);
+            OnCheckEmailAndPass onCheckEmailAndPass=new EmailAndPassSignIn(this,this);
+            onCheckEmailAndPass.onEmailAndPassEntered(userMail,userPass);
         }
     }
     private void signIn() {
+
         googleSignIn= new GoogleSignIn(this,this);
         mGoogleApiClient= googleSignIn.buildApiClient();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -137,13 +140,13 @@ public class SignInActivity extends AppCompatActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
     @Override
-    public void autherizationSuccess() {
+    public void onAutherizationSuccess() {
         startActivity(new Intent(this, ContactsListActivity.class));
         finish();
     }
 
     @Override
-    public void autherizationFailed() {
+    public void onAutherizationFailed() {
         Toast.makeText(SignInActivity.this, "Authentication failed.",
                 Toast.LENGTH_SHORT).show();
     }

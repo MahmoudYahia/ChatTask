@@ -5,8 +5,8 @@ package com.project.chattask.callBackInterface;
  */
 
 public interface onCheckAuthorizationListener {
-    void autherizationSuccess();
+    void onAutherizationSuccess();
 
-    void autherizationFailed();
+    void onAutherizationFailed();
 
 }

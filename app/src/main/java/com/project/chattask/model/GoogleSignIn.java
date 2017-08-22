@@ -13,7 +13,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.project.chattask.R;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
@@ -58,10 +57,10 @@ public class GoogleSignIn extends SignInAuthorization implements GoogleApiClient
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             //Log.w(TAG, "signInWithCredential", task.getException());
-                            mOnCheckAuthorizationListner.autherizationFailed();
+                            mOnCheckAuthorizationListner.onAutherizationFailed();
                         } else {
                             addAuthUserToContacts(mFirebaseAuth.getCurrentUser());
-                            mOnCheckAuthorizationListner.autherizationSuccess();
+                            mOnCheckAuthorizationListner.onAutherizationSuccess();
                         }
                     }
                 });
