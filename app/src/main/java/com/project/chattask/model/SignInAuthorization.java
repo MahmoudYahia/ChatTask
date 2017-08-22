@@ -58,6 +58,7 @@ public class SignInAuthorization implements GoogleApiClient.OnConnectionFailedLi
     }
 
     public void checkEmialPassword(String Email, String Pass) {
+
         mFirebaseAuth.signInWithEmailAndPassword(Email, Pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -97,41 +98,40 @@ public class SignInAuthorization implements GoogleApiClient.OnConnectionFailedLi
                             //Log.w(TAG, "signInWithCredential", task.getException());
                             mOnCheckAuthorizationListner.autherizationFailed();
                         } else {
-                            addUserToContacts(mFirebaseAuth.getCurrentUser());
+                            addAuthUserToContacts(mFirebaseAuth.getCurrentUser());
                             mOnCheckAuthorizationListner.autherizationSuccess();
                         }
                     }
                 });
     }
 
-    public void addUserToContacts(FirebaseUser account) {
-
-
-        //public Contact(String uid, String tokenId, String uname, String uemail, String imgURl)
-        Contact contact = new Contact(
-                account.getUid()
-                , account.getDisplayName()
-                , account.getEmail()
-                , account.getPhotoUrl().toString());
-
-
-        mDatabaseRef.child("Contacts")
-                .child(account.getUid())
-                .setValue(contact);
-
-    }
-
     public void addAuthUserToContacts(FirebaseUser account) {
 
-        //public Contact(String uid, String tokenId, String uname, String uemail, String imgURl)
-        String email = account.getEmail();
-        String FormattedName = email.substring(0, email.indexOf('@'));
+
+        String FormattedName;
+        String ImgUrl;
+
+        if (account.getDisplayName()==null){
+            String email = account.getEmail();
+            FormattedName = email.substring(0, email.indexOf('@'));
+        }
+        else {
+
+            FormattedName= account.getDisplayName();
+        }
+
+        if (account.getPhotoUrl()==null){
+            ImgUrl= null;
+        }else {
+            ImgUrl=account.getPhotoUrl().toString();
+        }
+
 
         Contact contact = new Contact(
                 account.getUid()
                 , FormattedName
                 , account.getEmail()
-                , " empty ");
+                , ImgUrl);
 
 
         mDatabaseRef.child("Contacts")
