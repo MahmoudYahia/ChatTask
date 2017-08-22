@@ -22,11 +22,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.callBackInterface.OnCheckEmailAndPass;
+import com.project.chattask.callBackInterface.OnGoogleSignListner;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 import com.project.chattask.R;
 import com.project.chattask.model.EmailAndPassSignIn;
 import com.project.chattask.model.GoogleSignIn;
-import com.project.chattask.model.SignInAuthorization;
 
 public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener,
@@ -45,7 +45,7 @@ public class SignInActivity extends AppCompatActivity implements
     EditText InputEmial, InputPass;
     ImageView logoImg;
     ProgressBar SignInProgresBar;
-    GoogleSignIn googleSignIn;
+    OnGoogleSignListner onGoogleSignListner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +102,8 @@ public class SignInActivity extends AppCompatActivity implements
         if (TextUtils.isEmpty(userMail) || TextUtils.isEmpty(userPass)) {
             Toast.makeText(getBaseContext(), R.string.empty_fields, Toast.LENGTH_LONG).show();
 
-        } else {
+        } else
+            {
 
             OnCheckEmailAndPass onCheckEmailAndPass=new EmailAndPassSignIn(this,this);
             onCheckEmailAndPass.onEmailAndPassEntered(userMail,userPass);
@@ -110,8 +111,9 @@ public class SignInActivity extends AppCompatActivity implements
     }
     private void signIn() {
 
-        googleSignIn= new GoogleSignIn(this,this);
-        mGoogleApiClient= googleSignIn.buildApiClient();
+        onGoogleSignListner= new GoogleSignIn(this,this);
+
+        mGoogleApiClient= onGoogleSignListner.BuildingApiClient();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -127,7 +129,7 @@ public class SignInActivity extends AppCompatActivity implements
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                googleSignIn.firebaseAuthWithGoogle(account);
+                onGoogleSignListner.AuthAccountWithGoogle(account);
 
             } else {
                 // not Success

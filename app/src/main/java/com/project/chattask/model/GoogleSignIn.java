@@ -15,23 +15,25 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.project.chattask.R;
+import com.project.chattask.callBackInterface.OnGoogleSignListner;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 
 /**
  * Created by mah_y on 8/22/2017.
  */
 
-public class GoogleSignIn extends SignInAuthorization implements GoogleApiClient.OnConnectionFailedListener {
+public class GoogleSignIn extends SignInAuthorization implements
+        GoogleApiClient.OnConnectionFailedListener,OnGoogleSignListner {
 
     private GoogleApiClient mGoogleApiClient;
-
 
 
     public GoogleSignIn(Context context, onCheckAuthorizationListener onCheckAuthorizationListener) {
         super(context, onCheckAuthorizationListener);
     }
 
-    public GoogleApiClient buildApiClient() {
+    @Override
+    public GoogleApiClient BuildingApiClient() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(mContext.getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -44,8 +46,9 @@ public class GoogleSignIn extends SignInAuthorization implements GoogleApiClient
         return mGoogleApiClient;
     }
 
-    public void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+    @Override
+    public void AuthAccountWithGoogle(GoogleSignInAccount account) {
+        final AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -65,6 +68,7 @@ public class GoogleSignIn extends SignInAuthorization implements GoogleApiClient
                     }
                 });
     }
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
