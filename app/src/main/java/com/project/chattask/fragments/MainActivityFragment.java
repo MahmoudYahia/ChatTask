@@ -64,6 +64,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     RecyclerView messageRecyclerView;
     RecyclerView.LayoutManager layoutManager;
     MessgesAdapter messgesAdapter;
+    //MessgesAdapter messgesAdapter;
+
 
     EditText inputMessage;
     ImageButton sendMessage, SelectImgBtn;
