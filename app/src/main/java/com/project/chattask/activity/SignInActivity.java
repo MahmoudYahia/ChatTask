@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 import com.project.chattask.R;
+import com.project.chattask.model.EmailAndPassSignIn;
+import com.project.chattask.model.GoogleSignIn;
 import com.project.chattask.model.SignInAuthorization;
 
 public class SignInActivity extends AppCompatActivity implements
@@ -41,9 +43,7 @@ public class SignInActivity extends AppCompatActivity implements
     EditText InputEmial, InputPass;
     ImageView logoImg;
     ProgressBar SignInProgresBar;
-
-    SignInAuthorization signInAuthorization;
-
+    GoogleSignIn googleSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +70,6 @@ public class SignInActivity extends AppCompatActivity implements
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        signInAuthorization = new SignInAuthorization(this, this);
-        mGoogleApiClient = signInAuthorization.buildApiClient(); // build Api Client
 
 
     }
@@ -83,7 +81,6 @@ public class SignInActivity extends AppCompatActivity implements
         switch (id) {
             case R.id.sign_in_google:
                 signIn();
-
                 break;
 
             case R.id.btn_login:
@@ -104,10 +101,14 @@ public class SignInActivity extends AppCompatActivity implements
             Toast.makeText(getBaseContext(), R.string.empty_fields, Toast.LENGTH_LONG).show();
 
         } else {
-            signInAuthorization.checkEmialPassword(userMail, userPass);
+
+            EmailAndPassSignIn emailAndPassSignIn= new EmailAndPassSignIn(this,this);
+            emailAndPassSignIn.checkEmialPassword(userMail, userPass);
         }
     }
     private void signIn() {
+        googleSignIn= new GoogleSignIn(this,this);
+        mGoogleApiClient= googleSignIn.buildApiClient();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -123,7 +124,7 @@ public class SignInActivity extends AppCompatActivity implements
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                signInAuthorization.firebaseAuthWithGoogle(account);
+                googleSignIn.firebaseAuthWithGoogle(account);
 
             } else {
                 // not Success
