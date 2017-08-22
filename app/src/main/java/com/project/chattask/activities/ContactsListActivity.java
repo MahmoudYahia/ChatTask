@@ -32,7 +32,7 @@ import com.project.chattask.database.DataBaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsList extends AppCompatActivity implements OnContactSelectedListner, onContactsReadyListner {
+public class ContactsListActivity extends AppCompatActivity implements OnContactSelectedListner, onContactsReadyListner {
 
     DatabaseReference databaseRef;
     RecyclerView ContactsRecycler;
@@ -63,7 +63,7 @@ public class ContactsList extends AppCompatActivity implements OnContactSelected
         final AddContactsToDataBase addContactsToDataBase = new AddContactsToDataBase(this, this);
         addContactsToDataBase.execute();
 
-        ContactsAdapter = new ContactsAdapter(ContactsList.this, ContactsList, mFirebaseUser, ContactsList.this);
+        ContactsAdapter = new ContactsAdapter(ContactsListActivity.this, ContactsList, mFirebaseUser, ContactsListActivity.this);
         ContactsRecycler.setAdapter(ContactsAdapter);
 
         databaseRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
@@ -136,7 +136,7 @@ public class ContactsList extends AppCompatActivity implements OnContactSelected
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 FirebaseAuth.getInstance().signOut();
-                                startActivity(new Intent(ContactsList.this, SignIn.class));
+                                startActivity(new Intent(ContactsListActivity.this, SignIn.class));
                                 finish();
                             }
                         });

@@ -155,7 +155,7 @@ public class SignIn extends AppCompatActivity implements
 
                             if (user.isEmailVerified()) {
                                 addAuthUserToContacts(user);
-                                startActivity(new Intent(SignIn.this, ContactsList.class));
+                                startActivity(new Intent(SignIn.this, ContactsListActivity.class));
                                 finish();
                             } else {
                                 Toast.makeText(SignIn.this, "Not Verified Emial",
@@ -189,7 +189,7 @@ public class SignIn extends AppCompatActivity implements
                         } else {
 
                             addUserToContacts(mFirebaseAuth.getCurrentUser());
-                            startActivity(new Intent(SignIn.this, ContactsList.class));
+                            startActivity(new Intent(SignIn.this, ContactsListActivity.class));
                             finish();
 
                         }

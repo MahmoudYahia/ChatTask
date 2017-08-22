@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SignIn" />
         <activity
-            android:name=".activities.ContactsList"
+            android:name=".activities.ContactsListActivity"
             android:label="Contacts">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
