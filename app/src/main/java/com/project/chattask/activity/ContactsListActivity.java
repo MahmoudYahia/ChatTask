@@ -60,8 +60,6 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
 
         ContactsList = new ArrayList<>();
 
-        final AddContactsToDataBase addContactsToDataBase = new AddContactsToDataBase(this, this);
-        addContactsToDataBase.execute();
 
         ContactsAdapter = new ContactsAdapter(ContactsListActivity.this, ContactsList, mFirebaseUser, ContactsListActivity.this);
         ContactsRecycler.setAdapter(ContactsAdapter);

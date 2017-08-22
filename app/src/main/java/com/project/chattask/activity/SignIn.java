@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -28,12 +27,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 import com.project.chattask.model.Contact;
 import com.project.chattask.R;
+import com.project.chattask.model.SignInAuthorization;
 
 public class SignIn extends AppCompatActivity implements
         View.OnClickListener,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, onCheckAuthorizationListener {
 
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseRef;
@@ -47,6 +48,8 @@ public class SignIn extends AppCompatActivity implements
     EditText InputEmial, InputPass;
     ImageView logoImg;
     ProgressBar SignInProgresBar;
+
+    SignInAuthorization signInAuthorization;
 
 
     @Override
@@ -70,24 +73,14 @@ public class SignIn extends AppCompatActivity implements
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_google);
         mSignInButton.setOnClickListener(this);
 
-        buildApiClient(); // build Api Client
 
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+
         mFirebaseAuth = FirebaseAuth.getInstance();
+        signInAuthorization = new SignInAuthorization(this, this);
+        mGoogleApiClient = signInAuthorization.buildApiClient(); // build Api Client
 
 
-    }
-
-    public void buildApiClient() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
     }
 
 
@@ -108,7 +101,7 @@ public class SignIn extends AppCompatActivity implements
                 break;
 
         }
-    }
+    } //t
 
     public void onLogInBtnPressed() {
         String userMail = InputEmial.getText().toString();
@@ -117,10 +110,13 @@ public class SignIn extends AppCompatActivity implements
         if (TextUtils.isEmpty(userMail) || TextUtils.isEmpty(userPass)) {
             Toast.makeText(getBaseContext(), R.string.empty_fields, Toast.LENGTH_LONG).show();
 
+        } else {
+            signInAuthorization.checkEmialPassword(userMail, userPass);
         }
-        else {
-            checkEmialPassword(userMail, userPass);
-        }
+    }
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -128,13 +124,13 @@ public class SignIn extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            SignInProgresBar.setVisibility(View.GONE); // hide
+            //SignInProgresBar.setVisibility(View.GONE); // hide
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+                signInAuthorization.firebaseAuthWithGoogle(account);
 
             } else {
                 // not Success
@@ -143,105 +139,30 @@ public class SignIn extends AppCompatActivity implements
         }
     }
 
-    public void checkEmialPassword(String Email, String Pass) {
-        /// SignInProgresBar.setVisibility(View.VISIBLE);
-        mFirebaseAuth.signInWithEmailAndPassword(Email, Pass)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            final FirebaseUser user = mFirebaseAuth.getCurrentUser();
-
-                            if (user.isEmailVerified()) {
-                                addAuthUserToContacts(user);
-                                startActivity(new Intent(SignIn.this, ContactsListActivity.class));
-                                finish();
-                            } else {
-                                Toast.makeText(SignIn.this, "Not Verified Emial",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(SignIn.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            //Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignIn.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            addUserToContacts(mFirebaseAuth.getCurrentUser());
-                            startActivity(new Intent(SignIn.this, ContactsListActivity.class));
-                            finish();
-
-                        }
-                    }
-                });
-    }
-
-    public void addUserToContacts(FirebaseUser account) {
-
-        //public Contact(String uid, String tokenId, String uname, String uemail, String imgURl)
-        Contact contact = new Contact(
-                account.getUid()
-                , account.getDisplayName()
-                , account.getEmail()
-                , account.getPhotoUrl().toString());
-
-
-        mDatabaseRef.child("Contacts")
-                .child(account.getUid())
-                .setValue(contact);
-
-    }
-
-    public void addAuthUserToContacts(FirebaseUser account) {
-        //public Contact(String uid, String tokenId, String uname, String uemail, String imgURl)
-        String email = account.getEmail();
-        String FormattedName = email.substring(0, email.indexOf('@'));
-
-        Contact contact = new Contact(
-                account.getUid()
-                , FormattedName
-                , account.getEmail()
-                , " empty ");
-
-
-        mDatabaseRef.child("Contacts")
-                .child(account.getUid())
-                .setValue(contact);
-
-        Toast.makeText(SignIn.this, "Added To Contacts",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    private void signIn() {
-        SignInProgresBar.setVisibility(View.VISIBLE);
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
+    @Override
+    public void autherizationSuccess() {
+        startActivity(new Intent(this, ContactsListActivity.class));
+        finish();
+    }
 
+    @Override
+    public void autherizationFailed() {
+        Toast.makeText(SignIn.this, "Authentication failed.",
+                Toast.LENGTH_SHORT).show();
+    }
 
+//    public void buildApiClient() {
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                .build();
+//    }
 }
