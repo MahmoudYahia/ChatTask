@@ -154,15 +154,4 @@ public class SignIn extends AppCompatActivity implements
                 Toast.LENGTH_SHORT).show();
     }
 
-//    public void buildApiClient() {
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-//                .build();
-//    }
 }
