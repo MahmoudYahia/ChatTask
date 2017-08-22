@@ -1,4 +1,4 @@
-package com.project.chattask.models;
+package com.project.chattask.model;
 
 import java.io.Serializable;
 

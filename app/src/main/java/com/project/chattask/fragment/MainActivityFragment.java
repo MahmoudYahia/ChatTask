@@ -1,4 +1,4 @@
-package com.project.chattask.fragments;
+package com.project.chattask.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -40,9 +40,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.project.chattask.adapters.MessgesAdapter;
-import com.project.chattask.models.Contact;
-import com.project.chattask.models.Message;
+import com.project.chattask.adapter.MessgesAdapter;
+import com.project.chattask.model.Contact;
+import com.project.chattask.model.Message;
 import com.project.chattask.R;
 
 import java.io.ByteArrayOutputStream;

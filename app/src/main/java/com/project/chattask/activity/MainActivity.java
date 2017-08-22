@@ -1,4 +1,4 @@
-package com.project.chattask.activities;
+package com.project.chattask.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +15,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.models.Contact;
+import com.project.chattask.model.Contact;
 import com.project.chattask.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;

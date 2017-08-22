@@ -1,4 +1,4 @@
-package com.project.chattask.adapters;
+package com.project.chattask.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +13,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
-import com.project.chattask.models.Message;
+import com.project.chattask.model.Message;
 import com.project.chattask.R;
 import com.squareup.picasso.Picasso;
 

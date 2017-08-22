@@ -1,4 +1,4 @@
-package com.project.chattask.callBackInterfaces;
+package com.project.chattask.callBackInterface;
 
 /**
  * Created by mah_y on 8/21/2017.

@@ -1,6 +1,6 @@
-package com.project.chattask.callBackInterfaces;
+package com.project.chattask.callBackInterface;
 
-import com.project.chattask.models.Contact;
+import com.project.chattask.model.Contact;
 
 import java.util.ArrayList;
 

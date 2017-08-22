@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.project.chattask.models.Contact;
+import com.project.chattask.model.Contact;
 
 import java.util.ArrayList;
 

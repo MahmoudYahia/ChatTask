@@ -1,4 +1,4 @@
-package com.project.chattask.activities;
+package com.project.chattask.activity;
 
 import android.content.Context;
 import android.content.Intent;

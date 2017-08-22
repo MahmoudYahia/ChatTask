@@ -1,4 +1,4 @@
-package com.project.chattask.activities;
+package com.project.chattask.activity;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
@@ -22,11 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.project.chattask.adapters.ContactsAdapter;
-import com.project.chattask.models.Contact;
-import com.project.chattask.callBackInterfaces.OnContactSelectedListner;
+import com.project.chattask.adapter.ContactsAdapter;
+import com.project.chattask.model.Contact;
+import com.project.chattask.callBackInterface.OnContactSelectedListner;
 import com.project.chattask.R;
-import com.project.chattask.callBackInterfaces.onContactsReadyListner;
+import com.project.chattask.callBackInterface.onContactsReadyListner;
 import com.project.chattask.database.DataBaseHelper;
 
 import java.util.ArrayList;

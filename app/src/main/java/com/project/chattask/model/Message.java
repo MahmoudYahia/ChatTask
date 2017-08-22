@@ -1,4 +1,4 @@
-package com.project.chattask.models;
+package com.project.chattask.model;
 
 /**
  * Created by mah_y on 8/13/2017.
