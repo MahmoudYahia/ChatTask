@@ -49,7 +49,7 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser == null) {
             // Not signed in
-            startActivity(new Intent(this, SignIn.class));
+            startActivity(new Intent(this, SignInActivity.class));
             finish();
         }
 
@@ -134,7 +134,7 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 FirebaseAuth.getInstance().signOut();
-                                startActivity(new Intent(ContactsListActivity.this, SignIn.class));
+                                startActivity(new Intent(ContactsListActivity.this, SignInActivity.class));
                                 finish();
                             }
                         });

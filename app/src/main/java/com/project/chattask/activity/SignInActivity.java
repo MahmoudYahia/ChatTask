@@ -18,21 +18,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
-import com.project.chattask.model.Contact;
 import com.project.chattask.R;
 import com.project.chattask.model.SignInAuthorization;
 
-public class SignIn extends AppCompatActivity implements
+public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener, onCheckAuthorizationListener {
 
@@ -97,7 +90,7 @@ public class SignIn extends AppCompatActivity implements
                 onLogInBtnPressed();
                 break;
             case R.id.btn_sign_up:
-                startActivity(new Intent(SignIn.this, SignUp.class));
+                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
                 break;
 
         }
@@ -150,7 +143,7 @@ public class SignIn extends AppCompatActivity implements
 
     @Override
     public void autherizationFailed() {
-        Toast.makeText(SignIn.this, "Authentication failed.",
+        Toast.makeText(SignInActivity.this, "Authentication failed.",
                 Toast.LENGTH_SHORT).show();
     }
 

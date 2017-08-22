@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.project.chattask.R;
 
-public class SignUp extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     EditText RegUserEmail, RegUserPassword, RegUserConfirmPass;
     String UserEmail, UserPass, UserConfirmPass;
@@ -71,12 +71,12 @@ public class SignUp extends AppCompatActivity {
                                             // Sign in success, update UI with the signed-in user's information
                                             FirebaseUser user = mAuth.getCurrentUser();
                                             user.sendEmailVerification();
-                                            startActivity(new Intent(SignUp.this, SignIn.class));
-                                            SignUp.this.finish();
+                                            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
+                                            SignUpActivity.this.finish();
 
                                         } else {
                                             // If sign in fails, display a message to the user.
-                                            Toast.makeText(SignUp.this, "please enter valid email or password ",
+                                            Toast.makeText(SignUpActivity.this, "please enter valid email or password ",
                                                     Toast.LENGTH_SHORT).show();
                                         }
 
@@ -86,7 +86,7 @@ public class SignUp extends AppCompatActivity {
 
                     } else {
                         // no internet connection
-                        Toast.makeText(SignUp.this, "no internet connection",
+                        Toast.makeText(SignUpActivity.this, "no internet connection",
                                 Toast.LENGTH_SHORT).show();
                     }
                 } else {

@@ -1,7 +1,6 @@
 package com.project.chattask.model;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -20,8 +19,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.R;
-import com.project.chattask.activity.ContactsListActivity;
-import com.project.chattask.activity.SignIn;
 import com.project.chattask.callBackInterface.onCheckAuthorizationListener;
 
 /**

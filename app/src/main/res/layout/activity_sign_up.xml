@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    tools:context="com.project.chattask.activity.SignUp">
+    tools:context="com.project.chattask.activity.SignUpActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
