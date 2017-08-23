@@ -8,8 +8,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.callBackInterface.signUp.OnAccountCreatedListner;
-import com.project.chattask.callBackInterface.signUp.OnCreateNewAccount;
+import com.project.chattask.callback.signUp.OnAccountCreatedListner;
+import com.project.chattask.callback.signUp.OnCreateNewAccount;
 
 /**
  * Created by mah_y on 8/22/2017.

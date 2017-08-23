@@ -8,8 +8,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.callBackInterface.signIn.OnCheckEmailAndPass;
-import com.project.chattask.callBackInterface.signIn.onCheckAuthorizationListener;
+import com.project.chattask.callback.signIn.OnCheckEmailAndPass;
+import com.project.chattask.callback.signIn.onCheckAuthorizationListener;
 
 /**
  * Created by mah_y on 8/22/2017.

@@ -18,11 +18,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.adapter.ContactsAdapter;
-import com.project.chattask.callBackInterface.signOut.OnCompleteSignOut;
+import com.project.chattask.callback.signOut.OnCompleteSignOut;
 import com.project.chattask.model.Contact;
-import com.project.chattask.callBackInterface.contacsAdapter.OnContactSelectedListner;
+import com.project.chattask.callback.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
-import com.project.chattask.callBackInterface.fetchContacts.OnContactsReadyListner;
+import com.project.chattask.callback.fetchContacts.OnContactsReadyListner;
 import com.project.chattask.model.FetchContacts;
 import com.project.chattask.model.SignOut;
 
@@ -122,8 +122,8 @@ public class ContactsListActivity extends AppCompatActivity implements
 
     @Override
     public void contactsFetched(ArrayList<Contact> contacts) {
-       // this.ContactsList.addAll(contacts);
-        this.ContactsList=contacts;
+        this.ContactsList.addAll(contacts);
+       //this.ContactsList=contacts;
         Log.i("qqqq",ContactsList.size()+"");
         contactsAdapter.notifyDataSetChanged();
     }

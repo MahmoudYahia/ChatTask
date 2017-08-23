@@ -1,4 +1,4 @@
-package com.project.chattask.callBackInterface.signUp;
+package com.project.chattask.callback.signUp;
 
 /**
  * Created by mah_y on 8/22/2017.

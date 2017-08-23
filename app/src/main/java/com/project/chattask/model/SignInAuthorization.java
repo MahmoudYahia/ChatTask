@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.project.chattask.callBackInterface.signIn.onCheckAuthorizationListener;
+import com.project.chattask.callback.signIn.onCheckAuthorizationListener;
 
 /**
  * Created by mah_y on 8/22/2017.

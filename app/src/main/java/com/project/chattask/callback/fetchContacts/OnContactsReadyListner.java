@@ -1,4 +1,4 @@
-package com.project.chattask.callBackInterface.fetchContacts;
+package com.project.chattask.callback.fetchContacts;
 
 import com.project.chattask.model.Contact;
 

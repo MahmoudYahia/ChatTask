@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.project.chattask.R;
-import com.project.chattask.callBackInterface.signUp.OnAccountCreatedListner;
-import com.project.chattask.callBackInterface.signUp.OnCreateNewAccount;
+import com.project.chattask.callback.signUp.OnAccountCreatedListner;
+import com.project.chattask.callback.signUp.OnCreateNewAccount;
 import com.project.chattask.model.CreatNewAccount;
 
 public class SignUpActivity extends AppCompatActivity implements OnAccountCreatedListner {

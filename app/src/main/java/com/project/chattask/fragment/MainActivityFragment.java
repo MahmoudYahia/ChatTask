@@ -41,7 +41,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.project.chattask.adapter.MessgesAdapter;
+import com.project.chattask.callback.OnfetchingMessagesListner;
 import com.project.chattask.model.Contact;
+import com.project.chattask.model.FetchMessages;
 import com.project.chattask.model.Message;
 import com.project.chattask.R;
 
@@ -59,7 +61,7 @@ import java.util.Map;
 public class MainActivityFragment extends Fragment implements View.OnClickListener,
         TextWatcher,
         ISingleImagePickerCallback,
-        IImagePickerHandler {
+        IImagePickerHandler,OnfetchingMessagesListner {
 
     RecyclerView messageRecyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -78,8 +80,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private StorageReference storageRef;
 
 
-    List<Message> Messages;
-    List<String> MessagesIds;
+    List<Message> messageList;
+   // List<String> MessagesIds;
     // user Fields
 
     private Message message;
@@ -125,8 +127,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         messageRecyclerView.setLayoutManager(layoutManager);
         messageRecyclerView.setHasFixedSize(true);
 
-        Messages = new ArrayList<>();
-        messgesAdapter = new MessgesAdapter(getActivity(), Messages);
+        messageList = new ArrayList<>();
+        messgesAdapter = new MessgesAdapter(getActivity(), messageList);
+
         messageRecyclerView.setAdapter(messgesAdapter);
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -245,41 +248,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     }
 
     public void readMessages() {
-
-
-        DatabaseReference mDatabaseRef;
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference()
-                .child("messeges")
-                .child(mFirebaseUser.getUid())
-                .child(SelectedConttact.getUid());
-
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Map<String, Message> td = new HashMap<>();
-
-               // Messages = new ArrayList<>(td.values());
-                MessagesIds = new ArrayList<>(td.keySet());
-
-                for (DataSnapshot Messages : dataSnapshot.getChildren()) {
-
-                    Message message = Messages.getValue(Message.class);
-                    MainActivityFragment.this.Messages.add(message);
-                    String string = Messages.getKey();
-                    MessagesIds.add(string);
-
-                }
-
-                messgesAdapter.notifyDataSetChanged();
-                layoutManager.scrollToPosition(Messages.size() - 1);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        FetchMessages fetchMessages= new FetchMessages(mFirebaseUser,SelectedConttact,this);
+        fetchMessages.getMessages();
 
     }
 
@@ -386,6 +356,18 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     public void startPickerHandler(Intent data, int requestCode) {
         startActivityForResult(Intent.createChooser(data,
                 "Select Picture"), requestCode);
+    }
+
+
+    @Override
+    public void onMessagesFetched(ArrayList<Message> messagesList) {
+        this.messageList.addAll(messagesList);
+        messgesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onfetchMessagesFailed() {
+        Toast.makeText(getActivity(),getString(R.string.errorFitchingData),Toast.LENGTH_LONG).show();
     }
 }
 

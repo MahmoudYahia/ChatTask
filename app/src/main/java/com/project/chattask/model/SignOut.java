@@ -5,8 +5,8 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.project.chattask.callBackInterface.signOut.OnCompleteSignOut;
-import com.project.chattask.callBackInterface.signOut.OnSignOut;
+import com.project.chattask.callback.signOut.OnCompleteSignOut;
+import com.project.chattask.callback.signOut.OnSignOut;
 
 /**
  * Created by mah_y on 8/22/2017.

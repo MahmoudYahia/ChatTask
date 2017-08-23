@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseUser;
 import com.project.chattask.model.Contact;
-import com.project.chattask.callBackInterface.contacsAdapter.OnContactSelectedListner;
+import com.project.chattask.callback.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
 
 import java.util.List;

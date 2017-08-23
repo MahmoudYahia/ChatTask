@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.project.chattask.callBackInterface.fetchContacts.OnContactsReadyListner;
+import com.project.chattask.callback.fetchContacts.OnContactsReadyListner;
 
 import java.util.ArrayList;
 

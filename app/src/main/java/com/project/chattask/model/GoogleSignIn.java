@@ -15,8 +15,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.project.chattask.R;
-import com.project.chattask.callBackInterface.signIn.OnGoogleSignListner;
-import com.project.chattask.callBackInterface.signIn.onCheckAuthorizationListener;
+import com.project.chattask.callback.signIn.OnGoogleSignListner;
+import com.project.chattask.callback.signIn.onCheckAuthorizationListener;
 
 /**
  * Created by mah_y on 8/22/2017.
