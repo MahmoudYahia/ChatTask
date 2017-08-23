@@ -1,4 +1,4 @@
-package com.project.chattask.callBackInterface;
+package com.project.chattask.callBackInterface.signIn;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.GoogleApiClient;

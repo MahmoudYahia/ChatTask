@@ -11,5 +11,6 @@
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="noConnection">No Internet Connection</string>
     <string name="errorFitchingData">Error Fitching Data</string>
+    <string name="errorRegisterAccount">Error RegisterAccount</string>
 
 </resources>

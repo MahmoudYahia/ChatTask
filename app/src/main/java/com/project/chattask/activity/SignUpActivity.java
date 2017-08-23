@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,19 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.project.chattask.R;
+import com.project.chattask.callBackInterface.signUp.OnAccountCreatedListner;
+import com.project.chattask.callBackInterface.signUp.OnCreateNewAccount;
+import com.project.chattask.model.CreatNewAccount;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements OnAccountCreatedListner {
 
     EditText RegUserEmail, RegUserPassword, RegUserConfirmPass;
     String UserEmail, UserPass, UserConfirmPass;
     Button RegisterButton;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +38,6 @@ public class SignUpActivity extends AppCompatActivity {
                 addAccount();
             }
         });
-        mAuth = FirebaseAuth.getInstance();
 
     }
 
@@ -63,26 +58,8 @@ public class SignUpActivity extends AppCompatActivity {
                     // matched pass
                     if (isOnline(this)) {
                         // call register method and check  iff success
-                        mAuth.createUserWithEmailAndPassword(UserEmail, UserPass)
-                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            FirebaseUser user = mAuth.getCurrentUser();
-                                            user.sendEmailVerification();
-                                            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                                            SignUpActivity.this.finish();
-
-                                        } else {
-                                            // If sign in fails, display a message to the user.
-                                            Toast.makeText(SignUpActivity.this, "please enter valid email or password ",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                });
-
+                        OnCreateNewAccount onCreateNewAccount= new CreatNewAccount(this,this);
+                        onCreateNewAccount.onCreateAccount(UserEmail,UserPass);
 
                     } else {
                         // no internet connection
@@ -107,4 +84,15 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onCreateAccountSuccess() {
+        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onCreateAccountFailed() {
+        Toast.makeText(SignUpActivity.this, R.string.errorRegisterAccount,
+                Toast.LENGTH_SHORT).show();
+    }
 }

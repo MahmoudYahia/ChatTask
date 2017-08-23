@@ -8,6 +8,6 @@ import java.util.ArrayList;
  * Created by mah_y on 8/22/2017.
  */
 
-public interface onContactsReadyListner {
+public interface OnContactsReadyListner {
     void contactsFetched(ArrayList<Contact> contacts);
 }

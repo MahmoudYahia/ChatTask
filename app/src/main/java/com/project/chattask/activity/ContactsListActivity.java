@@ -24,15 +24,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.chattask.adapter.ContactsAdapter;
 import com.project.chattask.model.Contact;
-import com.project.chattask.callBackInterface.OnContactSelectedListner;
+import com.project.chattask.callBackInterface.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
-import com.project.chattask.callBackInterface.onContactsReadyListner;
+import com.project.chattask.callBackInterface.OnContactsReadyListner;
 import com.project.chattask.database.DataBaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsListActivity extends AppCompatActivity implements OnContactSelectedListner, onContactsReadyListner {
+public class ContactsListActivity extends AppCompatActivity implements OnContactSelectedListner, OnContactsReadyListner {
 
     DatabaseReference databaseRef;
     RecyclerView ContactsRecycler;
@@ -174,11 +174,11 @@ class AddContactsToDataBase extends AsyncTask<Context, Void, ArrayList<Contact>>
 
     private Context mContext;
     private DataBaseHelper dataBaseHelper;
-    private onContactsReadyListner onContactsReadyListner;
+    private OnContactsReadyListner OnContactsReadyListner;
     ArrayList<Contact> contactsList;
 
-    public AddContactsToDataBase(Context context, onContactsReadyListner onContactsReadyListner) {
-        this.onContactsReadyListner = onContactsReadyListner;
+    public AddContactsToDataBase(Context context, OnContactsReadyListner OnContactsReadyListner) {
+        this.OnContactsReadyListner = OnContactsReadyListner;
         this.mContext = context;
     }
 
@@ -193,6 +193,6 @@ class AddContactsToDataBase extends AsyncTask<Context, Void, ArrayList<Contact>>
     @Override
     protected void onPostExecute(ArrayList<Contact> contacts) {
         super.onPostExecute(contacts);
-        onContactsReadyListner.contactsFetched(contacts);
+        OnContactsReadyListner.contactsFetched(contacts);
     }
 }
