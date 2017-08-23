@@ -1,4 +1,4 @@
-package com.project.chattask.callBackInterface;
+package com.project.chattask.callBackInterface.fetchContacts;
 
 import com.project.chattask.model.Contact;
 
@@ -10,4 +10,5 @@ import java.util.ArrayList;
 
 public interface OnContactsReadyListner {
     void contactsFetched(ArrayList<Contact> contacts);
+    void contactsFetchFailed();
 }

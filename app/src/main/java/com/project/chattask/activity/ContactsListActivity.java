@@ -1,9 +1,6 @@
 package com.project.chattask.activity;
 
-import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,33 +8,37 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.project.chattask.adapter.ContactsAdapter;
+import com.project.chattask.callBackInterface.signOut.OnCompleteSignOut;
 import com.project.chattask.model.Contact;
 import com.project.chattask.callBackInterface.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
-import com.project.chattask.callBackInterface.OnContactsReadyListner;
-import com.project.chattask.database.DataBaseHelper;
+import com.project.chattask.callBackInterface.fetchContacts.OnContactsReadyListner;
+import com.project.chattask.model.FetchContacts;
+import com.project.chattask.model.SignOut;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsListActivity extends AppCompatActivity implements OnContactSelectedListner, OnContactsReadyListner {
+public class ContactsListActivity extends AppCompatActivity implements
+        OnContactSelectedListner
+        , OnContactsReadyListner
+        , OnCompleteSignOut {
 
     DatabaseReference databaseRef;
     RecyclerView ContactsRecycler;
     RecyclerView.LayoutManager layoutManager;
-    ContactsAdapter ContactsAdapter;
+    ContactsAdapter contactsAdapter;
+
     List<Contact> ContactsList;
     FirebaseUser mFirebaseUser;
 
@@ -60,43 +61,17 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
 
         ContactsList = new ArrayList<>();
 
-
-        ContactsAdapter = new ContactsAdapter(ContactsListActivity.this, ContactsList, mFirebaseUser, ContactsListActivity.this);
-        ContactsRecycler.setAdapter(ContactsAdapter);
+        contactsAdapter = new ContactsAdapter(ContactsListActivity.this, ContactsList, mFirebaseUser, ContactsListActivity.this);
+        ContactsRecycler.setAdapter(contactsAdapter);
 
         databaseRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
 
         if (isOnline(this)) {
-            readContacts();
+            FetchContacts fetchContacts = new FetchContacts(this);
+            fetchContacts.readContacts();
         } else {
             Toast.makeText(getBaseContext(), R.string.noConnection, Toast.LENGTH_LONG).show();
         }
-
-    }
-
-    public void readContacts() {
-
-        databaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildren() != null) {
-
-                    for (DataSnapshot contacts : dataSnapshot.getChildren()) {
-
-                        Contact contact = contacts.getValue(Contact.class);
-                        ContactsList.add(contact);
-                    }
-                    ContactsAdapter.notifyDataSetChanged();
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
     }
 
@@ -109,9 +84,7 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -126,26 +99,10 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
     }
 
     public void ShowConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("SignOut")
-                .setCancelable(false)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                FirebaseAuth.getInstance().signOut();
-                                startActivity(new Intent(ContactsListActivity.this, SignInActivity.class));
-                                finish();
-                            }
-                        });
-        builder.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        SignOut signOut = new SignOut(this, this);
+        signOut.userSignOut();
+
     }
 
     public static boolean isOnline(Context context) {
@@ -165,34 +122,22 @@ public class ContactsListActivity extends AppCompatActivity implements OnContact
 
     @Override
     public void contactsFetched(ArrayList<Contact> contacts) {
-        Toast.makeText(this, contacts.size() + "", Toast.LENGTH_LONG).show();
-    }
-}
-
-class AddContactsToDataBase extends AsyncTask<Context, Void, ArrayList<Contact>> {
-
-
-    private Context mContext;
-    private DataBaseHelper dataBaseHelper;
-    private OnContactsReadyListner OnContactsReadyListner;
-    ArrayList<Contact> contactsList;
-
-    public AddContactsToDataBase(Context context, OnContactsReadyListner OnContactsReadyListner) {
-        this.OnContactsReadyListner = OnContactsReadyListner;
-        this.mContext = context;
+       // this.ContactsList.addAll(contacts);
+        this.ContactsList=contacts;
+        Log.i("qqqq",ContactsList.size()+"");
+        contactsAdapter.notifyDataSetChanged();
     }
 
     @Override
-    protected ArrayList<Contact> doInBackground(Context... params) {
-        dataBaseHelper = new DataBaseHelper(mContext);
-        contactsList = new ArrayList<>();
-        contactsList = dataBaseHelper.getContacts();
-        return contactsList;
+    public void contactsFetchFailed() {
+        Toast.makeText(this,R.string.errorFitchingData,Toast.LENGTH_LONG).show();
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Contact> contacts) {
-        super.onPostExecute(contacts);
-        OnContactsReadyListner.contactsFetched(contacts);
+    public void signOutCompleted() {
+        startActivity(new Intent(ContactsListActivity.this, SignInActivity.class));
+        finish();
     }
 }
+
+
