@@ -7,8 +7,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.chattask.callback.OnfetchingMessagesListner;
+import com.project.chattask.datamodel.Contact;
+import com.project.chattask.datamodel.Message;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -40,7 +43,6 @@ public class FetchMessages {
                     mMessagesList.add(message);
                 }
                 mOnfetchingMessagesListner.onMessagesFetched(mMessagesList);
-
             }
 
             @Override

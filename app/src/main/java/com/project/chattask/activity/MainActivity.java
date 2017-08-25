@@ -15,7 +15,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.model.Contact;
+import com.project.chattask.datamodel.Contact;
 import com.project.chattask.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private FirebaseUser mFirebaseUser;
-    // user Fields
     private Contact SelectedConttact;
 
     CircleImageView personImg;
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this,R.string.errorFitchingData,Toast.LENGTH_LONG).show();
+      //  Toast.makeText(this,R.string.errorFitchingData,Toast.LENGTH_LONG).show();
     }
 
 }

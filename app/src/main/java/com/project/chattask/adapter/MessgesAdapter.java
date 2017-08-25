@@ -13,7 +13,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
-import com.project.chattask.model.Message;
+import com.project.chattask.datamodel.Message;
 import com.project.chattask.R;
 import com.squareup.picasso.Picasso;
 
@@ -67,9 +67,14 @@ public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHo
         holder.MessageContent.setText(messages.get(position).getText());
 
         int next = position + 1;
+
         if (next < messages.size()) {
+
             if (messages.get(position).getSenderid().equals(messages.get(next).getSenderid())) {
                 holder.imgView.setVisibility(View.INVISIBLE);
+            }
+            else {
+                holder.imgView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -77,7 +82,7 @@ public class MessgesAdapter extends RecyclerView.Adapter<MessgesAdapter.MyViewHo
         Picasso.with(mContext).load(messages.get(position).getUploadedimg()).into(holder.Img_Msg);
 
         if (!messages.get(position).getUploadedimg().equals("null")) {
-
+            holder.Img_Msg.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(messages.get(position).getUploadedimg())
                     .placeholder(R.drawable.person_flat)
                     .listener(new RequestListener<String, GlideDrawable>() {

@@ -32,28 +32,23 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.project.chattask.adapter.MessgesAdapter;
 import com.project.chattask.callback.OnfetchingMessagesListner;
-import com.project.chattask.model.Contact;
+import com.project.chattask.datamodel.Contact;
 import com.project.chattask.model.FetchMessages;
-import com.project.chattask.model.Message;
+import com.project.chattask.datamodel.Message;
 import com.project.chattask.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -66,7 +61,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     RecyclerView messageRecyclerView;
     RecyclerView.LayoutManager layoutManager;
     MessgesAdapter messgesAdapter;
-    //MessgesAdapter messgesAdapter;
 
 
     EditText inputMessage;
@@ -89,7 +83,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     Bitmap selectedBitmapImgToUpload;
     FirebaseStorage storage;
     boolean IfimgSelected = false;
-
     String sendedImgName;
     String uploadedImgUrl;
 
@@ -128,7 +121,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         messageRecyclerView.setHasFixedSize(true);
 
         messageList = new ArrayList<>();
-        messgesAdapter = new MessgesAdapter(getActivity(), messageList);
+        messgesAdapter = new MessgesAdapter(getActivity(), new ArrayList<Message>());
 
         messageRecyclerView.setAdapter(messgesAdapter);
 
@@ -157,12 +150,10 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         int id = v.getId();
         switch (id) {
             case R.id.sendButton:
-                // sendMessage();
                 checkToUpload();
                 break;
 
             case R.id.select_img:
-                //  showFileChooser();
                 imagePicker.openPicker();
                 break;
         }
@@ -234,7 +225,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             uploadedMsgImg = "null";
         }
         //Message(String receiverid, String senderid, String text, String name, String imageurl, String uploadedimg)
-
         message = new Message(
                 SelectedConttact.getUid()
                 , mFirebaseUser.getUid()
@@ -247,11 +237,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         return message;
     }
 
-    public void readMessages() {
-        FetchMessages fetchMessages= new FetchMessages(mFirebaseUser,SelectedConttact,this);
-        fetchMessages.getMessages();
 
-    }
 
     public void uploadPhotoToStorage() {
         //  storageRef.child("MessagesPhotos");
@@ -301,6 +287,11 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         return imageBytes;
     }
 
+    public void readMessages() {
+        FetchMessages fetchMessages= new FetchMessages(mFirebaseUser,SelectedConttact,this);
+        fetchMessages.getMessages();
+
+    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -359,9 +350,13 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     }
 
 
+
+
     @Override
     public void onMessagesFetched(ArrayList<Message> messagesList) {
-        this.messageList.addAll(messagesList);
+        messgesAdapter = new MessgesAdapter(getActivity(), messagesList);
+        messageRecyclerView.setAdapter(messgesAdapter);
+        layoutManager.scrollToPosition(messagesList.size()-1);
         messgesAdapter.notifyDataSetChanged();
     }
 

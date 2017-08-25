@@ -1,6 +1,6 @@
 package com.project.chattask.callback.fetchContacts;
 
-import com.project.chattask.model.Contact;
+import com.project.chattask.datamodel.Contact;
 
 import java.util.ArrayList;
 

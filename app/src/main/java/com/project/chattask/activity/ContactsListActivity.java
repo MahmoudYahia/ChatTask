@@ -19,7 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.chattask.adapter.ContactsAdapter;
 import com.project.chattask.callback.signOut.OnCompleteSignOut;
-import com.project.chattask.model.Contact;
+import com.project.chattask.callback.signOut.UserSignOut;
+import com.project.chattask.datamodel.Contact;
 import com.project.chattask.callback.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
 import com.project.chattask.callback.fetchContacts.OnContactsReadyListner;
@@ -32,7 +33,7 @@ import java.util.List;
 public class ContactsListActivity extends AppCompatActivity implements
         OnContactSelectedListner
         , OnContactsReadyListner
-        , OnCompleteSignOut {
+         {
 
     DatabaseReference databaseRef;
     RecyclerView ContactsRecycler;
@@ -100,8 +101,15 @@ public class ContactsListActivity extends AppCompatActivity implements
 
     public void ShowConfirmationDialog() {
 
-        SignOut signOut = new SignOut(this, this);
-        signOut.userSignOut();
+        UserSignOut userSignOut = new SignOut(this, new OnCompleteSignOut() {
+            @Override
+            public void signOutCompleted() {
+                startActivity(new Intent(ContactsListActivity.this, SignInActivity.class));
+                finish();
+            }
+        });
+
+        userSignOut.signOut();
 
     }
 
@@ -123,21 +131,15 @@ public class ContactsListActivity extends AppCompatActivity implements
     @Override
     public void contactsFetched(ArrayList<Contact> contacts) {
         this.ContactsList.addAll(contacts);
-       //this.ContactsList=contacts;
         Log.i("qqqq",ContactsList.size()+"");
         contactsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void contactsFetchFailed() {
-        Toast.makeText(this,R.string.errorFitchingData,Toast.LENGTH_LONG).show();
+       Toast.makeText(this,R.string.errorFitchingData,Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void signOutCompleted() {
-        startActivity(new Intent(ContactsListActivity.this, SignInActivity.class));
-        finish();
-    }
 }
 
 

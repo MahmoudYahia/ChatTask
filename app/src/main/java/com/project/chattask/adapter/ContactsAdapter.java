@@ -12,7 +12,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseUser;
-import com.project.chattask.model.Contact;
+import com.project.chattask.datamodel.Contact;
 import com.project.chattask.callback.contacsAdapter.OnContactSelectedListner;
 import com.project.chattask.R;
 

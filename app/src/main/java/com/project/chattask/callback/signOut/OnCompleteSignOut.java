@@ -5,5 +5,5 @@ package com.project.chattask.callback.signOut;
  */
 
 public interface OnCompleteSignOut {
-   public void signOutCompleted();
+    void signOutCompleted();
 }

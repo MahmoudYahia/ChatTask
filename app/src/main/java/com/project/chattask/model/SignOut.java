@@ -6,13 +6,13 @@ import android.support.v7.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.project.chattask.callback.signOut.OnCompleteSignOut;
-import com.project.chattask.callback.signOut.OnSignOut;
+import com.project.chattask.callback.signOut.UserSignOut;
 
 /**
  * Created by mah_y on 8/22/2017.
  */
 
-public class SignOut implements OnSignOut {
+public class SignOut implements UserSignOut {
     Context mContext;
     OnCompleteSignOut onCompleteSignOut;
 
@@ -22,7 +22,7 @@ public class SignOut implements OnSignOut {
     }
 
     @Override
-    public void userSignOut() {
+    public void signOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
         builder.setMessage("SignOut")
