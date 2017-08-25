@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity implements
     Button loginBtn, RegisterBtn;
     EditText InputEmial, InputPass;
     ImageView logoImg;
-    ProgressBar SignInProgresBar;
+  //  ProgressBar SignInProgresBar;
 
     GoogleLoginAuthenticator googleLoginAuthenticator;
 
@@ -42,7 +42,7 @@ public class SignInActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_sign_in);
 
         logoImg = (ImageView) findViewById(R.id.signin_logo_img);
-        SignInProgresBar = (ProgressBar) findViewById(R.id.sign_in_progress);
+     //   SignInProgresBar = (ProgressBar) findViewById(R.id.sign_in_progress);
 
         InputEmial = (EditText) findViewById(R.id.txt_email);
         InputPass = (EditText) findViewById(R.id.txt_pass);
